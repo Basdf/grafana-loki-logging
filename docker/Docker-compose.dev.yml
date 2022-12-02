@@ -1,0 +1,36 @@
+version: "3"
+
+networks:
+  loki:
+
+
+services:
+  logging-prototipe:
+    image: logging-prototipe
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    volumes:
+      - ../:/usr/src/app/
+      # - logs_data:/usr/src/app/app/logs
+
+    ports:
+      - 8000:8000
+      - 19001:19001
+    environment:
+      - DEBUGGER=True
+      - VERSION=0.0.0
+      - TITLE=Logging Prototipe
+      - DESCRIPTION=Logging Prototipe code
+      - ENVIRONMENT=dev
+      - LOGGING_MODE=a
+      - LOGGING_MAX_BYTES=0
+      - LOGGING_BACKUP_COUNT=9
+
+    networks:
+      - loki
+
+volumes:
+  logs_data:
+    external: true
